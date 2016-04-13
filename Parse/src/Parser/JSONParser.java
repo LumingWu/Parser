@@ -3,7 +3,6 @@ package Parser;
 import Component.JSONNode;
 import Component.JSONObject;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class JSONParser {
 
@@ -12,7 +11,7 @@ public class JSONParser {
     }
     
     public static JSONNode parse(String[] file){
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         for(String s : file){
             b.append(s);
         }
@@ -20,7 +19,7 @@ public class JSONParser {
     }
     
     public static JSONNode parse(List<String> file){
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         for(String s : file){
             b.append(s);
         }
@@ -29,7 +28,7 @@ public class JSONParser {
     
     public static JSONNode parse(String file){
         if(file.startsWith("{") && file.endsWith("}")){
-            
+            return new JSONObject();
         }
         else if(file.startsWith("[") && file.endsWith("]")){
             
