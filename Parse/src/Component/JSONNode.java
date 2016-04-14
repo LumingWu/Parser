@@ -6,8 +6,12 @@ public interface JSONNode {
     
     public void setValue(JSONNode value);
     
+    public JSONNode getChild(String name);
+    
+    public void setChild(String name, JSONNode child);
+    
     public JSONNodeType getType();
     
-    public void evaluate(String expression);
+    public void evaluate(String expression, int start, int end);
     
 }

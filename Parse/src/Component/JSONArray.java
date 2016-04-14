@@ -1,17 +1,32 @@
 package Component;
 
+import java.util.HashMap;
+
 public class JSONArray implements JSONNode{
+    
+    private JSONNode _value;
+    private HashMap<String, JSONNode> _childs = new HashMap<String, JSONNode>();
     
     public JSONArray(){}
 
     @Override
     public JSONNode getValue() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return _value;
     }
 
     @Override
     public void setValue(JSONNode value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        _value = value;
+    }
+    
+    @Override
+    public JSONNode getChild(String name) {
+        return _childs.get(name);
+    }
+
+    @Override
+    public void setChild(String name, JSONNode child) {
+        _childs.put(name, child);
     }
 
     @Override
@@ -20,7 +35,6 @@ public class JSONArray implements JSONNode{
     }
 
     @Override
-    public void evaluate(String expression) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void evaluate(String expression, int start, int end) {
     }
 }
