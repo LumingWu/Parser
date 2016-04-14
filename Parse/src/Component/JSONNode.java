@@ -8,8 +8,6 @@ public interface JSONNode {
     
     public JSONNodeType getType();
     
-    public void setType(JSONNodeType type);
-    
-    public void evaluate();
+    public void evaluate(String expression);
     
 }

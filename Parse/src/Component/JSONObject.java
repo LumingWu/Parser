@@ -2,12 +2,9 @@ package Component;
 
 public class JSONObject implements JSONNode{
     
-    private String _name;
     private JSONNode _value;
     
-    public JSONObject(){
-        
-    }
+    public JSONObject(){}
 
     @Override
     public JSONNode getValue() {
@@ -21,16 +18,11 @@ public class JSONObject implements JSONNode{
 
     @Override
     public JSONNodeType getType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return JSONNodeType.OBJECT;
     }
 
     @Override
-    public void setType(JSONNodeType type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void evaluate() {
+    public void evaluate(String expression) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
