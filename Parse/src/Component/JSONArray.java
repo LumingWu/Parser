@@ -10,26 +10,6 @@ public class JSONArray implements JSONNode{
     public JSONArray(){}
 
     @Override
-    public JSONNode getValue() {
-        return _value;
-    }
-
-    @Override
-    public void setValue(JSONNode value) {
-        _value = value;
-    }
-    
-    @Override
-    public JSONNode getChild(String name) {
-        return _childs.get(name);
-    }
-
-    @Override
-    public void setChild(String name, JSONNode child) {
-        _childs.put(name, child);
-    }
-
-    @Override
     public JSONNodeType getType() {
         return JSONNodeType.ARRAY;
     }
