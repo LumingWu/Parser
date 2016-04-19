@@ -1,10 +1,9 @@
 package Parser;
 
-import Component.JSONArray;
-import Component.JSONNode;
 import Component.JSONObject;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,6 +52,8 @@ public class JSONParser {
             int i = start + 1;
             int state = 0;
             boolean search = true;
+            Object number = null;
+            int exponentStart = 0;
             while (search) {
                 char d = file.charAt(i);
                 switch (state) {
@@ -60,9 +61,10 @@ public class JSONParser {
                         if (d > 47 && d < 58) {
 
                         } else if (d == '.') {
-                            state = 2;
+                            state = 1;
                         } else if (d == 'E' || d == 'e') {
-                            state = 3;
+                            state = 2;
+                            number = new BigInteger(file.substring(start, i));
                         } else {
                             search = false;
                             valueAndEnd[0] = Integer.parseInt(file.substring(start, i));
@@ -73,10 +75,53 @@ public class JSONParser {
                         if (d > 47 && d < 58) {
 
                         } else if (d == 'E' || d == 'e') {
-                            state = 4;
+                            state = 3;
+                            number = new BigDecimal(file.substring(start, i));
                         } else {
                             search = false;
                             valueAndEnd[0] = Double.parseDouble(file.substring(start, i));
+                            valueAndEnd[1] = i;
+                        }
+                        break;
+                    case 2:
+                        if (d == '+') {
+                            exponentStart = i + 1;
+                        } else if (d == '-') {
+                            exponentStart = i;
+                        } else {
+                            try {
+                                throw new ParseException("Semantic error: Expected the sign of the exponent.", i);
+                            } catch (ParseException ex) {
+                                Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                        state = 4;
+                        break;
+                    case 3:
+                        if (d == '+') {
+                            exponentStart = i + 1;
+                        } else if (d == '-') {
+                            exponentStart = i;
+                        } else {
+                            try {
+                                throw new ParseException("Semantic error: Expected the sign of the exponent.", i);
+                            } catch (ParseException ex) {
+                                Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                        state = 5;
+                        break;
+                    case 4:
+                        if (!(d > 47 && d < 58)) {
+                            search = false;
+                            valueAndEnd[0] = ((BigInteger) number).multiply(new BigInteger("10").pow(Integer.parseInt(file.substring(exponentStart, i))));
+                            valueAndEnd[1] = i;
+                        }
+                        break;
+                    case 5:
+                        if (!(d > 47 && d < 58)) {
+                            search = false;
+                            valueAndEnd[0] = ((BigDecimal) number).multiply(new BigDecimal("10").pow(Integer.parseInt(file.substring(exponentStart, i))));
                             valueAndEnd[1] = i;
                         }
                         break;
@@ -100,7 +145,7 @@ public class JSONParser {
             }
         } else {
             try {
-                throw new ParseException("Syntax error: Cannot determine the type of data.", start);
+                throw new ParseException("Semantic error: Cannot determine the type of data.", start);
             } catch (ParseException ex) {
                 Logger.getLogger(JSONObject.class.getName()).log(Level.SEVERE, null, ex);
             }
