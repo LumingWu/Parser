@@ -1,5 +1,7 @@
 
 import Parser.JSONParser;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.LinkedList;
 import org.junit.After;
 import org.junit.Test;
@@ -108,6 +110,34 @@ public class JUnit {
     }
     
     @Test
+    public void negativeIntegerTest(){
+        o = JSONParser.parse("-123 ");
+        if(!(o instanceof Integer)){
+            check = false;
+            errorList.addLast(1);
+        }
+        if((int)o != -123){
+            check = false;
+            errorList.addLast(2);
+        }
+        assertTrue(errorList.toString(), check);
+    }
+    
+    @Test
+    public void eIntegerTest(){
+        o = JSONParser.parse("123E+10 ");
+        if(!(o instanceof BigInteger)){
+            check = false;
+            errorList.addLast(1);
+        }
+        if(!((BigInteger)o).equals(new BigInteger("1230000000000"))){
+            check = false;
+            errorList.addLast(2);
+        }
+        assertTrue(errorList.toString(), check);
+    }
+    
+    @Test
     public void doubleTest(){
         o = JSONParser.parse("1.23 ");
         if(!(o instanceof Double)){
@@ -115,6 +145,34 @@ public class JUnit {
             errorList.addLast(1);
         }
         if((double)o != 1.23){
+            check = false;
+            errorList.addLast(2);
+        }
+        assertTrue(errorList.toString(), check);
+    }
+    
+    @Test
+    public void negativeDoubleTest(){
+        o = JSONParser.parse("-1.23 ");
+        if(!(o instanceof Double)){
+            check = false;
+            errorList.addLast(1);
+        }
+        if((double)o != -1.23){
+            check = false;
+            errorList.addLast(2);
+        }
+        assertTrue(errorList.toString(), check);
+    }
+    
+    @Test
+    public void eDoubleTest(){
+        o = JSONParser.parse("1.23E+12 ");
+        if(!(o instanceof BigDecimal)){
+            check = false;
+            errorList.addLast(1);
+        }
+        if(!((BigDecimal)o).equals(new BigDecimal("1.23").multiply(new BigDecimal("10").pow(12)))){
             check = false;
             errorList.addLast(2);
         }
