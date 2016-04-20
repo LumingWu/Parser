@@ -46,7 +46,12 @@ public class JSONParser {
             while (file.charAt(i) != '\"') {
                 i = i + 1;
             }
-            valueAndEnd[0] = file.substring(start + 1, i);
+            if(start + 1 == i){
+                valueAndEnd[0] = "";
+            }
+            else{
+                valueAndEnd[0] = file.substring(start + 1, i);
+            }
             valueAndEnd[1] = i + 1;
         } else if ((c > 47 && c < 58) || c == '-') {
             int i = start + 1;
