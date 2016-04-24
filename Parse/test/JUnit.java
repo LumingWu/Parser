@@ -2,6 +2,7 @@
 import Parser.JSONParser;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.LinkedList;
 import org.junit.After;
 import org.junit.Test;
@@ -173,6 +174,69 @@ public class JUnit {
             errorList.addLast(1);
         }
         if(!((BigDecimal)o).equals(new BigDecimal("1.23").multiply(new BigDecimal("10").pow(12)))){
+            check = false;
+            errorList.addLast(2);
+        }
+        assertTrue(errorList.toString(), check);
+    }
+    
+    @Test
+    public void emptyArrayTest(){
+        o = JSONParser.parse("[]");
+        if(!(o instanceof Object[])){
+            System.out.println(o.getClass());
+            check = false;
+            errorList.addLast(1);
+        }
+        if(((Object[])o).length != 0){
+            check = false;
+            errorList.addLast(2);
+        }
+        assertTrue(errorList.toString(), check);
+    }
+    
+    @Test
+    public void array1DTest(){
+        o = JSONParser.parse("[ true ,\tfalse\t,\n\"String\", 123, 1.23]");
+        if(!(o instanceof Object[])){
+            check = false;
+            errorList.addLast(1);
+        }
+        if(((Object[])o).length != 5){
+            check = false;
+            errorList.addLast(2);
+        }
+        if((boolean)((Object[])o)[0] != true){
+            check = false;
+            errorList.addLast(3);
+        }
+        if((boolean)((Object[])o)[1] != false){
+            check = false;
+            errorList.addLast(4);
+        }
+        if(!"String".equals((String)((Object[])o)[2])){
+            check = false;
+            errorList.addLast(5);
+        }
+        if((int)((Object[])o)[3] != 123){
+            check = false;
+            errorList.addLast(6);
+        }
+        if((double)((Object[])o)[4] != 1.23){
+            check = false;
+            errorList.addLast(7);
+        }
+        assertTrue(errorList.toString(), check);
+    }
+    
+    @Test
+    public void array2DTest(){
+        o = JSONParser.parse("[[],[123]]");
+        if(((Object[])((Object[])o)[0]).length != 0){
+            check = false;
+            errorList.addLast(1);
+        }
+        if((int)((Object[])((Object[])o)[1])[0] != 123){
             check = false;
             errorList.addLast(2);
         }
