@@ -34,7 +34,7 @@ public class JSONParser {
         return parse(file, 0)[0];
     }
 
-    private static Object[] parse(String file, int start) {
+    public static Object[] parse(String file, int start) {
         Object[] valueAndEnd = new Object[2];
         char c = file.charAt(start);
         if (c == '{') {
