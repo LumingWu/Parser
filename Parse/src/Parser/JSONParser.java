@@ -40,7 +40,7 @@ public class JSONParser {
         char c = file.charAt(start);
         switch (c) {
             case '{':
-                HashMap map = new HashMap();
+                HashMap<String, Object> map = new HashMap<String, Object>();
                 int stateO = 0;
                 int iO = start + 1;
                 String nameO = null;
