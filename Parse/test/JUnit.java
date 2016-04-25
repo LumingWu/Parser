@@ -2,7 +2,6 @@
 import Parser.JSONParser;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import org.junit.After;
@@ -247,23 +246,23 @@ public class JUnit {
     @Test
     public void objectTest(){
         o = JSONParser.parse("{\"x\":123,\"y\":1.23, \"z\":true ,\"a\":\nfalse\n,\"b\":null}");
-        if((int)((HashMap)o).get("x") == 123){
+        if((int)((HashMap)o).get("x") != 123){
             check = false;
             errorList.addLast(1);
         }
-        if((double)((HashMap)o).get("y") == 1.23){
+        if((double)((HashMap)o).get("y") != 1.23){
             check = false;
             errorList.addLast(2);
         }
-        if((boolean)((HashMap)o).get("z") == true){
+        if((boolean)((HashMap)o).get("z") != true){
             check = false;
             errorList.addLast(3);
         }
-        if((boolean)((HashMap)o).get("a") == false){
+        if((boolean)((HashMap)o).get("a") != false){
             check = false;
             errorList.addLast(4);
         }
-        if(((HashMap)o).get("b") == null){
+        if(((HashMap)o).get("b") != null){
             check = false;
             errorList.addLast(5);
         }

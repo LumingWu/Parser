@@ -1,6 +1,5 @@
 package Parser;
 
-import Component.JSONObject;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
@@ -36,7 +35,7 @@ public class JSONParser {
         return parse(file, 0)[0];
     }
 
-    public static Object[] parse(String file, int start) {
+    private static Object[] parse(String file, int start) {
         char c = file.charAt(start);
         switch (c) {
             case '{':
@@ -61,7 +60,6 @@ public class JSONParser {
                                     default:
                                         throwException("Parsing an JSON Object, but the parser found wrong character "
                                                 + "while looking for the name of a value or end of the JSON Object.", iO);
-                                        break;
                                 }
                             }
                             break;
@@ -94,11 +92,11 @@ public class JSONParser {
                                     default:
                                         throwException("Parsing an JSON Object, but the parser found wrong character "
                                                 + "while looking for the charcter \',\' or the end of the JSON Object.", iO);
-                                        break;
                                 }
                             }
                             break;
                     }
+                    iO += 1;
                 }
             case '[':
                 LinkedList list = new LinkedList();
