@@ -1,11 +1,12 @@
 package Parser;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -181,7 +182,7 @@ public class JSONParser {
                                     stateN = 1;
                                 } else if (d == 'E' || d == 'e') {
                                     stateN = 2;
-                                    number = new BigInteger(file.substring(start, iN));
+                                    number = new BigDecimal(file.substring(start, iN));
                                 } else {
                                     return new Object[]{Integer.parseInt(file.substring(start, iN)), iN};
                                 }
@@ -190,7 +191,7 @@ public class JSONParser {
                                 if (d > 47 && d < 58) {
 
                                 } else if (d == 'E' || d == 'e') {
-                                    stateN = 3;
+                                    stateN = 2;
                                     number = new BigDecimal(file.substring(start, iN));
                                 } else {
                                     return new Object[]{Double.parseDouble(file.substring(start, iN)), iN};
@@ -200,36 +201,24 @@ public class JSONParser {
                                 switch (d) {
                                     case '+':
                                         exponentStart = iN + 1;
+                                        stateN = 3;
                                         break;
                                     case '-':
-                                        exponentStart = iN;
+                                        exponentStart = iN + 1;
+                                        stateN = 4;
                                         break;
                                     default:
                                         throwException("Expected the sign of the exponent.", iN);
                                 }
-                                stateN = 4;
                                 break;
                             case 3:
-                                switch (d) {
-                                    case '+':
-                                        exponentStart = iN + 1;
-                                        break;
-                                    case '-':
-                                        exponentStart = iN;
-                                        break;
-                                    default:
-                                        throwException("Expected the sign of the exponent.", iN);
+                                if (!(d > 47 && d < 58)) {
+                                    return new Object[]{((BigDecimal) number).multiply(new BigDecimal("10").pow(Integer.parseInt(file.substring(exponentStart, iN)))), iN};
                                 }
-                                stateN = 5;
                                 break;
                             case 4:
                                 if (!(d > 47 && d < 58)) {
-                                    return new Object[]{((BigInteger) number).multiply(new BigInteger("10").pow(Integer.parseInt(file.substring(exponentStart, iN)))), iN};
-                                }
-                                break;
-                            case 5:
-                                if (!(d > 47 && d < 58)) {
-                                    return new Object[]{((BigDecimal) number).multiply(new BigDecimal("10").pow(Integer.parseInt(file.substring(exponentStart, iN)))), iN};
+                                    return new Object[]{((BigDecimal) number).multiply(new BigDecimal("0.1").pow(Integer.parseInt(file.substring(exponentStart, iN)))), iN};
                                 }
                                 break;
                         }
@@ -247,6 +236,102 @@ public class JSONParser {
             throw new ParseException(text, location);
         } catch (ParseException ex) {
             Logger.getLogger(JSONParser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static String stringify(Object o) {
+        StringBuilder builder = new StringBuilder();
+        stringify(o, builder);
+        return builder.toString();
+    }
+
+    private static void stringify(Object o, StringBuilder b) {
+        if (o == null) {
+            b.append('n').append('u').append('l').append('l');
+        } else {
+            switch (o.getClass().getSimpleName()) {
+                case "HashMap":
+                    b.append("{");
+                    Iterator<Map.Entry> i = ((HashMap) o).entrySet().iterator();
+                    if (i.hasNext()) {
+                        Map.Entry e = i.next();
+                        b.append('\"');
+                        b.append(e.getKey()).append('\"').append(':');
+                        stringify(e.getValue(), b);
+                        while (i.hasNext()) {
+                            e = i.next();
+                            b.append(',').append('\"');
+                            b.append(e.getKey()).append('\"').append(':');
+                            stringify(e.getValue(), b);
+                        }
+                    }
+                    b.append("}");
+                    break;
+                case "Object[]":
+                    Object[] a = (Object[]) o;
+                    int length = a.length;
+                    b.append("[");
+                    switch (length) {
+                        case 0:
+                            break;
+                        case 1:
+                            stringify(a[0], b);
+                            break;
+                        default:
+                            stringify(a[0], b);
+                            for (int j = 1; j < length; j++) {
+                                b.append(',');
+                                stringify(a[j], b);
+                            }
+                    }
+                    b.append("]");
+                    break;
+                case "String":
+                    b.append('\"').append(o).append('\"');
+                    break;
+                case "Boolean":
+                    b.append(o);
+                    break;
+                case "Integer":
+                    b.append(o);
+                    break;
+                case "Double":
+                    b.append(o);
+                    break;
+                case "BigDecimal":
+                    BigDecimal bd = (BigDecimal) o;
+                    BigDecimal ten = new BigDecimal("10");
+                    int counter = 0;
+                    if (bd.compareTo(new BigDecimal("0")) == 1) {
+                        while (bd.compareTo(ten) >= 0) {
+                            bd = bd.divide(ten);
+                            counter += 1;
+                        }
+                        BigDecimal zero1 = new BigDecimal("0.1");
+                        while (bd.compareTo(zero1) == -1) {
+                            bd = bd.multiply(ten);
+                            counter -= 1;
+                        }
+                    } else {
+                        BigDecimal Nten = new BigDecimal("-10");
+                        while (bd.compareTo(Nten) <= 0) {
+                            bd = bd.divide(ten);
+                            counter += 1;
+                        }
+                        BigDecimal Nzero1 = new BigDecimal("-0.1");
+                        while (bd.compareTo(Nzero1) == 1) {
+                            bd = bd.multiply(ten);
+                            counter -= 1;
+                        }
+                    }
+                    if (counter >= 0) {
+                        b.append(bd.stripTrailingZeros()).append('E').append('+').append(counter);
+                    } else {
+                        b.append(bd.stripTrailingZeros()).append('E').append(counter);
+                    }
+                    break;
+                default:
+            }
         }
     }
 }

@@ -125,20 +125,6 @@ public class JUnit {
     }
     
     @Test
-    public void eIntegerTest(){
-        o = JSONParser.parse("123E+10 ");
-        if(!(o instanceof BigInteger)){
-            check = false;
-            errorList.addLast(1);
-        }
-        if(!((BigInteger)o).equals(new BigInteger("1230000000000"))){
-            check = false;
-            errorList.addLast(2);
-        }
-        assertTrue(errorList.toString(), check);
-    }
-    
-    @Test
     public void doubleTest(){
         o = JSONParser.parse("1.23 ");
         if(!(o instanceof Double)){
